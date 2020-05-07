@@ -43,15 +43,12 @@ jobs:
           name: cmake build
           shell: cmd.exe
           command: |
-            FOR /F %I IN ('REG QUERY HKLM\SOFTWARE\WOW6432Node\Microsoft ^| FINDSTR "VisualStudio_"') DO CALL :FINDVS "%~I" 2019
-            CALL %VCVARSALL% x86
-            @ECHO ON
-            GOTO :EOF
-            :FINDVS
-            SET vsid=%~1
-            SET vsid=%vsid:~63%
-            REG QUERY %~1\Capabilities | FINDSTR /R "ApplicationName.*REG_SZ.*Microsoft.Visual.Studio.%~2" && FOR /F "tokens=1,2,*" %%I IN ('REG QUERY HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\%vsid% ^| FINDSTR "InstallLocation"') DO SET VCVARSALL="%~K\VC\Auxiliary\Build\vcvarsall.bat"
-            GOTO :EOF
+            md build
+            pushd build
+            call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
+            cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" ..
+            nmake install
+            popd
 
   windows_vs2019_x86_64:
     executor: win/default
