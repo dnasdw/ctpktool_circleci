@@ -41,12 +41,13 @@ jobs:
             choco install cmake --installargs 'ADD_CMAKE_TO_PATH=User'
       - run:
           name: cmake build
-          command: |
-            mkdir build
-            pushd build
-            & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
-            cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" ..
-            nmake install
+          shell: cmd.exe
+          command:
+            mkdir build &&
+            pushd build &&
+            .cicommon\vs2019_command_prompt_x86_32.bat x86 &&
+            cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" .. &&
+            nmake install &&
             popd
 
   windows_vs2019_x86_64:
