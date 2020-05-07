@@ -43,12 +43,12 @@ jobs:
           name: cmake build
           shell: cmd.exe
           command:
-            "call ""C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"" x86 &&
+            call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86 &&
             mkdir build &&
             pushd build &&
             cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" .. &&
             nmake install &&
-            popd"
+            popd
 
   windows_vs2019_x86_64:
     executor: win/default
