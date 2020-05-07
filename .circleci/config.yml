@@ -7,14 +7,22 @@ commands:
   checkout_with_git_submodule:
     steps:
       - checkout
-      - run: git submodule sync --recursive
-      - run: git submodule update --progress --init --recursive
+      - run:
+          name: git submodule
+          command: |
+            git submodule sync --recursive
+            git submodule update --progress --init --recursive
 
 jobs:
   windows_vs2019_x86_32:
     executor: win/default
     steps:
       - checkout_with_git_submodule
+      - run:
+          name: install cmake
+          command: |
+            choco install cmake --installargs 'ADD_CMAKE_TO_PATH=User'
+            cmake --version
 
 workflows:
   version: 2
