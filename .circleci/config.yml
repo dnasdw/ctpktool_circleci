@@ -31,6 +31,28 @@ jobs:
             cmake --build . --target install --config Release --clean-first
             popd
 
+  windows_vs2019_x86_32_nmake:
+    executor: win/default
+    steps:
+      - checkout_with_git_submodule
+      - run:
+          name: install cmake
+          command: |
+            choco install cmake --installargs 'ADD_CMAKE_TO_PATH=User'
+      - run:
+          name: cmake build
+          shell: cmd.exe
+          command: |
+            FOR /F %%I IN ('REG QUERY HKLM\SOFTWARE\WOW6432Node\Microsoft ^| FINDSTR "VisualStudio_"') DO CALL :FINDVS "%%~I" 2019
+            CALL %VCVARSALL% x86
+            @ECHO ON
+            GOTO :EOF
+            :FINDVS
+            SET vsid=%~1
+            SET vsid=%vsid:~63%
+            REG QUERY %~1\Capabilities | FINDSTR /R "ApplicationName.*REG_SZ.*Microsoft.Visual.Studio.%~2" && FOR /F "tokens=1,2,*" %%I IN ('REG QUERY HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\%vsid% ^| FINDSTR "InstallLocation"') DO SET VCVARSALL="%%~K\VC\Auxiliary\Build\vcvarsall.bat"
+            GOTO :EOF
+
   windows_vs2019_x86_64:
     executor: win/default
     steps:
@@ -53,4 +75,5 @@ workflows:
   build:
     jobs:
       - windows_vs2019_x86_32
+      - windows_vs2019_x86_32_nmake
       - windows_vs2019_x86_64
