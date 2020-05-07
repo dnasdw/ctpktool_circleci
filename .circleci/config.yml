@@ -43,7 +43,7 @@ jobs:
           name: cmake build
           shell: cmd.exe
           command:
-            .cicommon\vs2019_command_prompt_x86_32.bat x86 &&
+            .cicommon\vs2019_command_prompt.bat x86 &&
             mkdir build &&
             pushd build &&
             cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" .. &&
