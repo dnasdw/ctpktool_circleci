@@ -22,6 +22,9 @@ jobs:
           name: install cmake
           command: |
             choco install cmake --installargs 'ADD_CMAKE_TO_PATH=User'
+      - run:
+          name: get cmake version
+          command: |
             cmake --version
 
 workflows:
