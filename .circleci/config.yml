@@ -43,7 +43,7 @@ jobs:
           name: cmake build
           shell: cmd.exe
           command:
-            dir C:\
+            dir C:\ &&
             "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86 &&
             mkdir build &&
             pushd build &&
