@@ -1,4 +1,4 @@
-#error fail
+//#error fail
 
 #include "ctpktool.h"
 #include "ctpk.h"
