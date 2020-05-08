@@ -28,6 +28,7 @@ commands:
       - run:
           name: windows vs2019 devenv x86_32 << parameters.cmake_build_type >> build
           command: |
+            echo $ErrorActionPreference
             mkdir build
             pushd build
             cmake -G "Visual Studio 16" -T v142 -A Win32 ..
