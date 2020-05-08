@@ -46,7 +46,7 @@ jobs:
             .cicommon\vs2019_command_prompt.bat x86 &&
             mkdir build &&
             pushd build &&
-            cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" .. &&
+            cmd /c "cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" .." &&
             nmake install &&
             popd
 
