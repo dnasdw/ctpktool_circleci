@@ -63,6 +63,10 @@ commands:
           name: windows vs2019 nmake x86_32 << parameters.cmake_build_type >> build
           #shell: cmd.exe
           command: |
+            pushd HKLM:\SOFTWARE\WOW6432Node\Microsoft
+            ls VisualStudio_* |
+            foreach { echo $_.Name }
+            popd
             cmd.exe
             .cicommon\vs2019_command_prompt.bat x86
             mkdir build
