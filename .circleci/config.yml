@@ -64,8 +64,11 @@ commands:
           #shell: cmd.exe
           command: |
             pushd HKLM:\SOFTWARE\WOW6432Node\Microsoft
-            ls VisualStudio_* |
-            foreach { echo $_.Name }
+            ls VisualStudio_ | foreach
+            {
+                $vsid = $_.Name
+                echo $vsid
+            }
             popd
             cmd.exe
             .cicommon\vs2019_command_prompt.bat x86
