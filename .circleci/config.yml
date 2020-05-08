@@ -31,7 +31,7 @@ commands:
             mkdir build
             pushd build
             cmake -G "Visual Studio 16" -T v142 -A Win32 ..
-            cmake --build . --target install --config << parameters.cmake_build_type >> --clean-first
+            cmake --build . --target install --config "<< parameters.cmake_build_type >>" --clean-first
             popd
   windows_vs2019_devenv_x86_64_build:
     parameters:
@@ -46,7 +46,7 @@ commands:
             mkdir build
             pushd build
             cmake -G "Visual Studio 16" -T v142 -A x64 ..
-            cmake --build . --target install --config << parameters.cmake_build_type >> --clean-first
+            cmake --build . --target install --config "<< parameters.cmake_build_type >>" --clean-first
             popd
   windows_vs2019_nmake_x86_32_build:
     parameters:
@@ -60,7 +60,7 @@ commands:
           shell: cmd.exe
           command:
             .cicommon\vs2019_command_prompt.bat x86 &&
-            .cicommon\cmake_nmake_build.bat << parameters.cmake_build_type >>
+            .cicommon\cmake_nmake_build.bat "<< parameters.cmake_build_type >>"
   windows_vs2019_nmake_x86_64_build:
     parameters:
       cmake_build_type:
@@ -73,7 +73,7 @@ commands:
           shell: cmd.exe
           command:
             .cicommon\vs2019_command_prompt.bat amd64 &&
-            .cicommon\cmake_nmake_build.bat << parameters.cmake_build_type >>
+            .cicommon\cmake_nmake_build.bat "<< parameters.cmake_build_type >>"
 
 jobs:
   windows_vs2019_devenv_x86_32_Release:
