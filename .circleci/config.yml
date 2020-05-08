@@ -4,6 +4,13 @@ orbs:
   win: circleci/windows@2.4.0
 
 commands:
+  choco_install_cmake:
+    steps:
+      - run:
+          name: install cmake
+          command: |
+            choco install cmake --installargs 'ADD_CMAKE_TO_PATH=User'
+
   checkout_with_git_submodule:
     steps:
       - checkout
@@ -17,11 +24,8 @@ jobs:
   windows_vs2019_x86_32:
     executor: win/default
     steps:
+      - choco_install_cmake
       - checkout_with_git_submodule
-      - run:
-          name: install cmake
-          command: |
-            choco install cmake --installargs 'ADD_CMAKE_TO_PATH=User'
       - run:
           name: cmake build
           command: |
@@ -34,38 +38,14 @@ jobs:
   windows_vs2019_x86_32_nmake:
     executor: win/default
     steps:
+      - choco_install_cmake
       - checkout_with_git_submodule
       - run:
-          name: install cmake
-          command: |
-            choco install cmake --installargs 'ADD_CMAKE_TO_PATH=User'
-      - run:
-          name: cmake build
+          name: cmake build Release
           shell: cmd.exe
           command:
             .cicommon\vs2019_command_prompt.bat x86 &&
-            mkdir build &&
-            pushd build &&
-            cmd /c "cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" .." &&
-            nmake install &&
-            popd
-
-  windows_vs2019_x86_64:
-    executor: win/default
-    steps:
-      - checkout_with_git_submodule
-      - run:
-          name: install cmake
-          command: |
-            choco install cmake --installargs 'ADD_CMAKE_TO_PATH=User'
-      - run:
-          name: cmake build
-          command: |
-            mkdir build
-            pushd build
-            cmake -G "Visual Studio 16" -T v142 -A x64 ..
-            cmake --build . --target install --config Release --clean-first
-            popd
+            .cicommon\cmake_nmake_build.bat
 
 workflows:
   version: 2
@@ -73,4 +53,3 @@ workflows:
     jobs:
       - windows_vs2019_x86_32
       - windows_vs2019_x86_32_nmake
-      - windows_vs2019_x86_64
