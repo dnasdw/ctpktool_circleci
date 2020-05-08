@@ -10,7 +10,6 @@ commands:
           name: install cmake
           command: |
             choco install cmake --installargs 'ADD_CMAKE_TO_PATH=User'
-
   checkout_with_git_submodule:
     steps:
       - checkout
@@ -19,21 +18,50 @@ commands:
           command: |
             git submodule sync --recursive
             git submodule update --progress --init --recursive
-
-jobs:
-  windows_vs2019_x86_32:
-    executor: win/default
+  windows_vs2019_x86_32_devenv_build:
+    parameters:
+      cmake_build_type:
+        type: string
+        default: Release
     steps:
-      - choco_install_cmake
-      - checkout_with_git_submodule
       - run:
-          name: cmake build
+          name: windows vs2019 x86_32 devenv << parameters.cmake_build_type >> build
           command: |
             mkdir build
             pushd build
             cmake -G "Visual Studio 16" -T v142 -A Win32 ..
-            cmake --build . --target install --config Release --clean-first
+            cmake --build . --target install --config << parameters.cmake_build_type >> --clean-first
             popd
+
+jobs:
+  windows_vs2019_x86_32_devenv_Release:
+    executor: win/default
+    steps:
+      - choco_install_cmake
+      - checkout_with_git_submodule
+      - windows_vs2019_x86_32_devenv_build:
+          cmake_build_type: Release
+  windows_vs2019_x86_32_devenv_Debug:
+    executor: win/default
+    steps:
+      - choco_install_cmake
+      - checkout_with_git_submodule
+      - windows_vs2019_x86_32_devenv_build:
+          cmake_build_type: Debug
+  windows_vs2019_x86_32_devenv_RelWithDebInfo:
+    executor: win/default
+    steps:
+      - choco_install_cmake
+      - checkout_with_git_submodule
+      - windows_vs2019_x86_32_devenv_build:
+          cmake_build_type: RelWithDebInfo
+  windows_vs2019_x86_32_devenv_MinSizeRel:
+    executor: win/default
+    steps:
+      - choco_install_cmake
+      - checkout_with_git_submodule
+      - windows_vs2019_x86_32_devenv_build:
+          cmake_build_type: MinSizeRel
 
   windows_vs2019_x86_32_nmake:
     executor: win/default
@@ -51,5 +79,8 @@ workflows:
   version: 2
   build:
     jobs:
-      - windows_vs2019_x86_32
+      - windows_vs2019_x86_32_devenv_Release
+      - windows_vs2019_x86_32_devenv_Debug
+      - windows_vs2019_x86_32_devenv_RelWithDebInfo
+      - windows_vs2019_x86_32_devenv_MinSizeRel
       - windows_vs2019_x86_32_nmake
