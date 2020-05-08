@@ -28,11 +28,12 @@ commands:
       - run:
           name: windows vs2019 devenv x86_32 << parameters.cmake_build_type >> build
           command: |
-            $ErrorActionPreference = "Stop"
             mkdir build
             pushd build
             cmake -G "Visual Studio 16" -T v142 -A Win32 ..
+            if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
             cmake --build . --target install --config "<< parameters.cmake_build_type >>" --clean-first
+            if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
             popd
   windows_vs2019_devenv_x86_64_build:
     parameters:
