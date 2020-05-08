@@ -27,12 +27,9 @@ commands:
     steps:
       - run:
           name: windows vs2019 devenv x86_32 << parameters.cmake_build_type >> build
-          command: |
-            mkdir build
-            pushd build
-            cmake -G "Visual Studio 16" -T v142 -A Win32 ..
-            cmake --build . --target install --config "<< parameters.cmake_build_type >>" --clean-first || exit %errorlevel%
-            popd
+          shell: cmd.exe
+          command:
+            .cicommon\cmake_vs2019_devenv_x86_32_build.bat "<< parameters.cmake_build_type >>"
   windows_vs2019_devenv_x86_64_build:
     parameters:
       cmake_build_type:

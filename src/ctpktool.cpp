@@ -1,3 +1,5 @@
+#error fail
+
 #include "ctpktool.h"
 #include "ctpk.h"
 
