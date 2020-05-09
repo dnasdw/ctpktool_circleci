@@ -52,6 +52,54 @@ commands:
             cmake --build . --target install --config "<< parameters.cmake_build_type >>" --clean-first
             if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
             popd
+  windows_vs2017_vs2019_nmake_build:
+    parameters:
+      vs_year:
+        type: string
+        # 2017 2019
+        default: 2019
+      vs_arch:
+        type: string
+        # x86 amd64
+        default: x86
+      cmake_build_type:
+        type: string
+        # Debug Release RelWithDebInfo MinSizeRel
+        default: Release
+    steps:
+      - run:
+          name: windows vs<< parameters.vs_year >> nmake << parameters.vs_arch >> << parameters.cmake_build_type >> build
+          command: |
+            $vs_year = "<< parameters.vs_year >>"
+            $vs_arch = "<< parameters.vs_arch >>"
+            if (($vs_year -ne "2019") -and ($vs_year -ne "2017")) {
+                $vs_year = "2019"
+            }
+            pushd HKLM:\SOFTWARE\WOW6432Node\Microsoft
+            ls VisualStudio_* | foreach {
+                $vs_id = $_.Name.Substring("HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\VisualStudio_".Length)
+                $app_name = gpv "HKLM:\SOFTWARE\WOW6432Node\Microsoft\VisualStudio_$($vs_id)\Capabilities" ApplicationName
+                if ($app_name -eq "Microsoft Visual Studio $($vs_year)") {
+                    $install_location = gpv "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\$($vs_id)" InstallLocation
+                    if ($install_location -ne "") {
+                        $env:VCVARSALL = "$($install_location)\VC\Auxiliary\Build\vcvarsall.bat"
+                    }
+                }
+            }
+            popd
+            cmd /c """%VCVARSALL%"" $($vs_arch) & set" | foreach {
+                if ($_ -match "=") {
+                    $v = $_.Split("=")
+                    si -Path "env:\$($v[0])" -Value "$($v[1])" -Force
+                }
+            }
+            mkdir build
+            pushd build
+            cmake -DCMAKE_BUILD_TYPE=<< parameters.cmake_build_type >> -G "NMake Makefiles" ..
+            if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
+            cmake --build . --target install --config "<< parameters.cmake_build_type >>" --clean-first
+            if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
+            popd
   windows_vs2019_nmake_x86_32_build:
     parameters:
       cmake_build_type:
@@ -61,21 +109,10 @@ commands:
     steps:
       - run:
           name: windows vs2019 nmake x86_32 << parameters.cmake_build_type >> build
-          #shell: cmd.exe
-          command: |
-            pushd HKLM:\SOFTWARE\WOW6432Node\Microsoft
-            ls VisualStudio_ | foreach
-            {
-                $vsid = $_.Name
-                echo $vsid
-            }
-            popd
-            cmd.exe
-            .cicommon\vs2019_command_prompt.bat x86
-            mkdir build
-            pushd build
-            cmake -DCMAKE_BUILD_TYPE=<< parameters.cmake_build_type >> -G "NMake Makefiles" ..
-            popd
+          shell: cmd.exe
+          command:
+            .cicommon\vs2019_command_prompt.bat x86 &&
+            .cicommon\cmake_nmake_build.bat "<< parameters.cmake_build_type >>"
   windows_vs2019_nmake_x86_64_build:
     parameters:
       cmake_build_type:
@@ -159,7 +196,9 @@ jobs:
     steps:
       - choco_install_cmake
       - checkout_with_git_submodule
-      - windows_vs2019_nmake_x86_32_build:
+      - windows_vs2019_nmake_build:
+          vs_year: 2019
+          vs_arch: x86
           cmake_build_type: Debug with white space
   windows_vs2019_nmake_x86_32_RelWithDebInfo:
     executor: win/default
