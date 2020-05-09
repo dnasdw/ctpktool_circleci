@@ -197,7 +197,7 @@ jobs:
       - choco_install_cmake
       - checkout_with_git_submodule
       - windows_vs2017_vs2019_nmake_build:
-          vs_year: 2019
+          vs_year: "2019"
           vs_arch: x86
           cmake_build_type: Debug
   windows_vs2019_nmake_x86_32_RelWithDebInfo:
