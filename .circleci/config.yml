@@ -56,8 +56,8 @@ commands:
     parameters:
       vs_year:
         type: enum
-        default: 2019
-        enum: [ 2017, 2019 ]
+        default: "2019"
+        enum: [ "2017", "2019" ]
       vs_arch:
         type: enum
         default: x86
