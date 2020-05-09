@@ -55,17 +55,17 @@ commands:
   windows_vs2017_vs2019_nmake_build:
     parameters:
       vs_year:
-        #type: string
-        # 2017 2019
+        type: enum
         default: 2019
+        enum: [ 2017, 2019 ]
       vs_arch:
-        type: string
-        # x86 amd64
+        type: enum
         default: x86
+        enum: [ x86, amd64 ]
       cmake_build_type:
-        type: string
-        # Debug Release RelWithDebInfo MinSizeRel
+        type: enum
         default: Release
+        enum: [ Debug, Release, RelWithDebInfo, MinSizeRel ]
     steps:
       - run:
           name: windows vs<< parameters.vs_year >> nmake << parameters.vs_arch >> << parameters.cmake_build_type >> build
@@ -199,7 +199,7 @@ jobs:
       - windows_vs2017_vs2019_nmake_build:
           vs_year: 2019
           vs_arch: x86
-          cmake_build_type: Debug with white space
+          cmake_build_type: Debug
   windows_vs2019_nmake_x86_32_RelWithDebInfo:
     executor: win/default
     steps:
