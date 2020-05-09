@@ -18,36 +18,28 @@ commands:
           command: |
             git submodule sync --recursive
             git submodule update --progress --init --recursive
-  windows_vs2019_devenv_x86_32_build:
+  windows_vs2019_devenv_build:
     parameters:
+      arch:
+        type: enum
+        default: x86_32
+        enum: [ x86_32, x86_64 ]
       cmake_build_type:
-        type: string
-        # Debug Release RelWithDebInfo MinSizeRel
+        type: enum
+        enum: [ Debug, Release, RelWithDebInfo, MinSizeRel ]
         default: Release
     steps:
       - run:
-          name: windows vs2019 devenv x86_32 << parameters.cmake_build_type >> build
+          name: windows vs2019 devenv << parameters.arch >> << parameters.cmake_build_type >> build
           command: |
+            if (<< parameters.arch >> -eq "x86_32") {
+                $cmake_arch = Win32
+            } else if (<< parameters.arch >> -eq "x86_64") {
+                $cmake_arch = x64
+            }
             mkdir build
             pushd build
-            cmake -G "Visual Studio 16" -T v142 -A Win32 ..
-            if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
-            cmake --build . --target install --config "<< parameters.cmake_build_type >>" --clean-first
-            if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
-            popd
-  windows_vs2019_devenv_x86_64_build:
-    parameters:
-      cmake_build_type:
-        type: string
-        # Debug Release RelWithDebInfo MinSizeRel
-        default: Release
-    steps:
-      - run:
-          name: windows vs2019 devenv x86_64 << parameters.cmake_build_type >> build
-          command: |
-            mkdir build
-            pushd build
-            cmake -G "Visual Studio 16" -T v142 -A x64 ..
+            cmake -G "Visual Studio 16" -T v142 -A "$cmake_arch" ..
             if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
             cmake --build . --target install --config "<< parameters.cmake_build_type >>" --clean-first
             if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
@@ -58,22 +50,23 @@ commands:
         type: enum
         default: "2019"
         enum: [ "2017", "2019" ]
-      vs_arch:
+      arch:
         type: enum
-        default: x86
-        enum: [ x86, amd64 ]
+        default: x86_32
+        enum: [ x86_32, x86_64 ]
       cmake_build_type:
         type: enum
         default: Release
         enum: [ Debug, Release, RelWithDebInfo, MinSizeRel ]
     steps:
       - run:
-          name: windows vs<< parameters.vs_year >> nmake << parameters.vs_arch >> << parameters.cmake_build_type >> build
+          name: windows vs<< parameters.vs_year >> nmake << parameters.arch >> << parameters.cmake_build_type >> build
           command: |
-            $vs_year = "<< parameters.vs_year >>"
-            $vs_arch = "<< parameters.vs_arch >>"
-            if (($vs_year -ne "2019") -and ($vs_year -ne "2017")) {
-                $vs_year = "2019"
+            $vs_year = << parameters.vs_year >>
+            if (<< parameters.arch >> -eq "x86_32") {
+                $vs_arch = x86
+            } else if  (<< parameters.arch >> -eq "x86_64") {
+                $vs_arch = amd64
             }
             pushd HKLM:\SOFTWARE\WOW6432Node\Microsoft
             ls VisualStudio_* | foreach {
@@ -100,32 +93,6 @@ commands:
             cmake --build . --target install --config "<< parameters.cmake_build_type >>" --clean-first
             if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
             popd
-  windows_vs2019_nmake_x86_32_build:
-    parameters:
-      cmake_build_type:
-        type: string
-        # Debug Release RelWithDebInfo MinSizeRel
-        default: Release
-    steps:
-      - run:
-          name: windows vs2019 nmake x86_32 << parameters.cmake_build_type >> build
-          shell: cmd.exe
-          command:
-            .cicommon\vs2019_command_prompt.bat x86 &&
-            .cicommon\cmake_nmake_build.bat "<< parameters.cmake_build_type >>"
-  windows_vs2019_nmake_x86_64_build:
-    parameters:
-      cmake_build_type:
-        type: string
-        # Debug Release RelWithDebInfo MinSizeRel
-        default: Release
-    steps:
-      - run:
-          name: windows vs2019 nmake x86_64 << parameters.cmake_build_type >> build
-          shell: cmd.exe
-          command:
-            .cicommon\vs2019_command_prompt.bat amd64 &&
-            .cicommon\cmake_nmake_build.bat "<< parameters.cmake_build_type >>"
 
 jobs:
   windows_vs2019_devenv_x86_32_Release:
@@ -133,63 +100,73 @@ jobs:
     steps:
       - choco_install_cmake
       - checkout_with_git_submodule
-      - windows_vs2019_devenv_x86_32_build:
+      - windows_vs2019_devenv_build:
+          arch: x86_32
           cmake_build_type: Release
   windows_vs2019_devenv_x86_32_Debug:
     executor: win/default
     steps:
       - choco_install_cmake
       - checkout_with_git_submodule
-      - windows_vs2019_devenv_x86_32_build:
+      - windows_vs2019_devenv_build:
+          arch: x86_32
           cmake_build_type: Debug
   windows_vs2019_devenv_x86_32_RelWithDebInfo:
     executor: win/default
     steps:
       - choco_install_cmake
       - checkout_with_git_submodule
-      - windows_vs2019_devenv_x86_32_build:
+      - windows_vs2019_devenv_build:
+          arch: x86_32
           cmake_build_type: RelWithDebInfo
   windows_vs2019_devenv_x86_32_MinSizeRel:
     executor: win/default
     steps:
       - choco_install_cmake
       - checkout_with_git_submodule
-      - windows_vs2019_devenv_x86_32_build:
+      - windows_vs2019_devenv_build:
+          arch: x86_32
           cmake_build_type: MinSizeRel
   windows_vs2019_devenv_x86_64_Release:
     executor: win/default
     steps:
       - choco_install_cmake
       - checkout_with_git_submodule
-      - windows_vs2019_devenv_x86_64_build:
+      - windows_vs2019_devenv_build:
+          arch: x86_64
           cmake_build_type: Release
   windows_vs2019_devenv_x86_64_Debug:
     executor: win/default
     steps:
       - choco_install_cmake
       - checkout_with_git_submodule
-      - windows_vs2019_devenv_x86_64_build:
+      - windows_vs2019_devenv_build:
+          arch: x86_64
           cmake_build_type: Debug
   windows_vs2019_devenv_x86_64_RelWithDebInfo:
     executor: win/default
     steps:
       - choco_install_cmake
       - checkout_with_git_submodule
-      - windows_vs2019_devenv_x86_64_build:
+      - windows_vs2019_devenv_build:
+          arch: x86_64
           cmake_build_type: RelWithDebInfo
   windows_vs2019_devenv_x86_64_MinSizeRel:
     executor: win/default
     steps:
       - choco_install_cmake
       - checkout_with_git_submodule
-      - windows_vs2019_devenv_x86_64_build:
+      - windows_vs2019_devenv_build:
+          arch: x86_64
           cmake_build_type: MinSizeRel
   windows_vs2019_nmake_x86_32_Release:
     executor: win/default
     steps:
       - choco_install_cmake
       - checkout_with_git_submodule
-      - windows_vs2019_nmake_x86_32_build:
+      - windows_vs2017_vs2019_nmake_build:
+          vs_year: "2019"
+          vs_arch: x86_32
           cmake_build_type: Release
   windows_vs2019_nmake_x86_32_Debug:
     executor: win/default
@@ -198,49 +175,61 @@ jobs:
       - checkout_with_git_submodule
       - windows_vs2017_vs2019_nmake_build:
           vs_year: "2019"
-          vs_arch: x86
+          vs_arch: x86_32
           cmake_build_type: Debug
   windows_vs2019_nmake_x86_32_RelWithDebInfo:
     executor: win/default
     steps:
       - choco_install_cmake
       - checkout_with_git_submodule
-      - windows_vs2019_nmake_x86_32_build:
+      - windows_vs2017_vs2019_nmake_build:
+          vs_year: "2019"
+          vs_arch: x86_32
           cmake_build_type: RelWithDebInfo
   windows_vs2019_nmake_x86_32_MinSizeRel:
     executor: win/default
     steps:
       - choco_install_cmake
       - checkout_with_git_submodule
-      - windows_vs2019_nmake_x86_32_build:
+      - windows_vs2017_vs2019_nmake_build:
+          vs_year: "2019"
+          vs_arch: x86_32
           cmake_build_type: MinSizeRel
   windows_vs2019_nmake_x86_64_Release:
     executor: win/default
     steps:
       - choco_install_cmake
       - checkout_with_git_submodule
-      - windows_vs2019_nmake_x86_64_build:
+      - windows_vs2017_vs2019_nmake_build:
+          vs_year: "2019"
+          vs_arch: x86_64
           cmake_build_type: Release
   windows_vs2019_nmake_x86_64_Debug:
     executor: win/default
     steps:
       - choco_install_cmake
       - checkout_with_git_submodule
-      - windows_vs2019_nmake_x86_64_build:
+      - windows_vs2017_vs2019_nmake_build:
+          vs_year: "2019"
+          vs_arch: x86_64
           cmake_build_type: Debug
   windows_vs2019_nmake_x86_64_RelWithDebInfo:
     executor: win/default
     steps:
       - choco_install_cmake
       - checkout_with_git_submodule
-      - windows_vs2019_nmake_x86_64_build:
+      - windows_vs2017_vs2019_nmake_build:
+          vs_year: "2019"
+          vs_arch: x86_64
           cmake_build_type: RelWithDebInfo
   windows_vs2019_nmake_x86_64_MinSizeRel:
     executor: win/default
     steps:
       - choco_install_cmake
       - checkout_with_git_submodule
-      - windows_vs2019_nmake_x86_64_build:
+      - windows_vs2017_vs2019_nmake_build:
+          vs_year: "2019"
+          vs_arch: x86_64
           cmake_build_type: MinSizeRel
 
 workflows:
