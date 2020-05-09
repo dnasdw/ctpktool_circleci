@@ -67,7 +67,7 @@ commands:
             $arch = "<< parameters.arch >>"
             if ($arch -eq "x86_32") {
                 $vs_arch = "x86"
-            } elseif  (<< parameters.arch >> -eq "x86_64") {
+            } elseif  ($arch -eq "x86_64") {
                 $vs_arch = "amd64"
             }
             pushd HKLM:\SOFTWARE\WOW6432Node\Microsoft
