@@ -32,10 +32,11 @@ commands:
       - run:
           name: windows vs2019 devenv << parameters.arch >> << parameters.cmake_build_type >> build
           command: |
-            if (<< parameters.arch >> -eq "x86_32") {
-                $cmake_arch = Win32
-            } elseif (<< parameters.arch >> -eq "x86_64") {
-                $cmake_arch = x64
+            $arch = "<< parameters.arch >>"
+            if ($arch -eq "x86_32") {
+                $cmake_arch = "Win32"
+            } else if ($arch -eq "x86_64") {
+                $cmake_arch = "x64"
             }
             mkdir build
             pushd build
@@ -62,11 +63,12 @@ commands:
       - run:
           name: windows vs<< parameters.vs_year >> nmake << parameters.arch >> << parameters.cmake_build_type >> build
           command: |
-            $vs_year = << parameters.vs_year >>
-            if (<< parameters.arch >> -eq "x86_32") {
-                $vs_arch = x86
-            } elseif  (<< parameters.arch >> -eq "x86_64") {
-                $vs_arch = amd64
+            $vs_year = "<< parameters.vs_year >>"
+            $arch = "<< parameters.arch >>"
+            if ($arch -eq "x86_32") {
+                $vs_arch = "x86"
+            } else if  (<< parameters.arch >> -eq "x86_64") {
+                $vs_arch = "amd64"
             }
             pushd HKLM:\SOFTWARE\WOW6432Node\Microsoft
             ls VisualStudio_* | foreach {
@@ -88,7 +90,7 @@ commands:
             }
             mkdir build
             pushd build
-            cmake -DCMAKE_BUILD_TYPE=<< parameters.cmake_build_type >> -G "NMake Makefiles" ..
+            cmake -DCMAKE_BUILD_TYPE="<< parameters.cmake_build_type >>" -G "NMake Makefiles" ..
             if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
             cmake --build . --target install --config "<< parameters.cmake_build_type >>" --clean-first
             if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
@@ -243,7 +245,7 @@ workflows:
       #- windows_vs2019_devenv_x86_64_Release
       #- windows_vs2019_devenv_x86_64_Debug
       #- windows_vs2019_devenv_x86_64_RelWithDebInfo
-      #- windows_vs2019_devenv_x86_64_MinSizeRel
+      - windows_vs2019_devenv_x86_64_MinSizeRel
       #- windows_vs2019_nmake_x86_32_Release
       #- windows_vs2019_nmake_x86_32_Debug
       #- windows_vs2019_nmake_x86_32_RelWithDebInfo
