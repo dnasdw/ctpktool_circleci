@@ -166,7 +166,7 @@ jobs:
       - checkout_with_git_submodule
       - windows_vs2017_vs2019_nmake_build:
           vs_year: "2019"
-          vs_arch: x86_32
+          arch: x86_32
           cmake_build_type: Release
   windows_vs2019_nmake_x86_32_Debug:
     executor: win/default
@@ -175,7 +175,7 @@ jobs:
       - checkout_with_git_submodule
       - windows_vs2017_vs2019_nmake_build:
           vs_year: "2019"
-          vs_arch: x86_32
+          arch: x86_32
           cmake_build_type: Debug
   windows_vs2019_nmake_x86_32_RelWithDebInfo:
     executor: win/default
@@ -184,7 +184,7 @@ jobs:
       - checkout_with_git_submodule
       - windows_vs2017_vs2019_nmake_build:
           vs_year: "2019"
-          vs_arch: x86_32
+          arch: x86_32
           cmake_build_type: RelWithDebInfo
   windows_vs2019_nmake_x86_32_MinSizeRel:
     executor: win/default
@@ -193,7 +193,7 @@ jobs:
       - checkout_with_git_submodule
       - windows_vs2017_vs2019_nmake_build:
           vs_year: "2019"
-          vs_arch: x86_32
+          arch: x86_32
           cmake_build_type: MinSizeRel
   windows_vs2019_nmake_x86_64_Release:
     executor: win/default
@@ -202,7 +202,7 @@ jobs:
       - checkout_with_git_submodule
       - windows_vs2017_vs2019_nmake_build:
           vs_year: "2019"
-          vs_arch: x86_64
+          arch: x86_64
           cmake_build_type: Release
   windows_vs2019_nmake_x86_64_Debug:
     executor: win/default
@@ -211,7 +211,7 @@ jobs:
       - checkout_with_git_submodule
       - windows_vs2017_vs2019_nmake_build:
           vs_year: "2019"
-          vs_arch: x86_64
+          arch: x86_64
           cmake_build_type: Debug
   windows_vs2019_nmake_x86_64_RelWithDebInfo:
     executor: win/default
@@ -220,7 +220,7 @@ jobs:
       - checkout_with_git_submodule
       - windows_vs2017_vs2019_nmake_build:
           vs_year: "2019"
-          vs_arch: x86_64
+          arch: x86_64
           cmake_build_type: RelWithDebInfo
   windows_vs2019_nmake_x86_64_MinSizeRel:
     executor: win/default
@@ -229,7 +229,7 @@ jobs:
       - checkout_with_git_submodule
       - windows_vs2017_vs2019_nmake_build:
           vs_year: "2019"
-          vs_arch: x86_64
+          arch: x86_64
           cmake_build_type: MinSizeRel
 
 workflows:
