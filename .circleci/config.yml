@@ -55,9 +55,9 @@ commands:
   windows_vs2017_vs2019_nmake_build:
     parameters:
       vs_year:
-        type: string
+        #type: string
         # 2017 2019
-        default: "2019"
+        default: 2019
       vs_arch:
         type: string
         # x86 amd64
@@ -196,7 +196,7 @@ jobs:
     steps:
       - choco_install_cmake
       - checkout_with_git_submodule
-      - windows_vs2019_nmake_build:
+      - windows_vs2017_vs2019_nmake_build:
           vs_year: 2019
           vs_arch: x86
           cmake_build_type: Debug with white space
