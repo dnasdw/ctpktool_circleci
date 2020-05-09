@@ -57,7 +57,7 @@ commands:
       vs_year:
         type: string
         # 2017 2019
-        default: 2019
+        default: "2019"
       vs_arch:
         type: string
         # x86 amd64
