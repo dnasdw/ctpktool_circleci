@@ -238,19 +238,19 @@ workflows:
   version: 2
   build:
     jobs:
-      #- windows_vs2019_devenv_x86_32_Release
-      #- windows_vs2019_devenv_x86_32_Debug
-      #- windows_vs2019_devenv_x86_32_RelWithDebInfo
-      #- windows_vs2019_devenv_x86_32_MinSizeRel
-      #- windows_vs2019_devenv_x86_64_Release
-      #- windows_vs2019_devenv_x86_64_Debug
-      #- windows_vs2019_devenv_x86_64_RelWithDebInfo
+      - windows_vs2019_devenv_x86_32_Release
+      - windows_vs2019_devenv_x86_32_Debug
+      - windows_vs2019_devenv_x86_32_RelWithDebInfo
+      - windows_vs2019_devenv_x86_32_MinSizeRel
+      - windows_vs2019_devenv_x86_64_Release
+      - windows_vs2019_devenv_x86_64_Debug
+      - windows_vs2019_devenv_x86_64_RelWithDebInfo
       - windows_vs2019_devenv_x86_64_MinSizeRel
-      #- windows_vs2019_nmake_x86_32_Release
-      #- windows_vs2019_nmake_x86_32_Debug
-      #- windows_vs2019_nmake_x86_32_RelWithDebInfo
-      #- windows_vs2019_nmake_x86_32_MinSizeRel
-      #- windows_vs2019_nmake_x86_64_Release
+      - windows_vs2019_nmake_x86_32_Release
+      - windows_vs2019_nmake_x86_32_Debug
+      - windows_vs2019_nmake_x86_32_RelWithDebInfo
+      - windows_vs2019_nmake_x86_32_MinSizeRel
+      - windows_vs2019_nmake_x86_64_Release
       - windows_vs2019_nmake_x86_64_Debug
-      #- windows_vs2019_nmake_x86_64_RelWithDebInfo
-      #- windows_vs2019_nmake_x86_64_MinSizeRel
+      - windows_vs2019_nmake_x86_64_RelWithDebInfo
+      - windows_vs2019_nmake_x86_64_MinSizeRel
