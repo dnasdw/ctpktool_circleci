@@ -7,12 +7,14 @@
 ::          [winxp|win7]
 ::          only for vs2012/vs2013/vs2015/vs2017 devenv
 ::      %A_CMAKE_OPTIONS%
+::          use "--" for no option
 ::          for example "-C <initial-cache> -D <var>:<type>=<value>"
 ::      %A_CMAKE_BUILD_ARCH%
 ::          [x86_32|x86_64]
 ::      %A_CMAKE_BUILD_TYPE%
 ::          [Debug|Release|RelWithDebInfo|MinSizeRel]
 ::      %A_CMAKE_BUILD_TARGET%
+::          use "--" for default target
 ::          for example "install"
 
 ::  var:
@@ -109,7 +111,7 @@ IF "%A_VS_TOOL%"=="devenv" (
         ) ELSE IF "%A_CMAKE_BUILD_ARCH%"=="x86_64" (
             SET CMAKE_GENERATOR=Visual Studio 11 Win64
         )
-        IF "%A_WINDOWS_VERSION%"=="xp" (
+        IF "%A_WINDOWS_VERSION%"=="winxp" (
             SET CMAKE_TOOLSET=v110_xp
         ) ELSE (
             SET CMAKE_TOOLSET=v110
@@ -120,7 +122,7 @@ IF "%A_VS_TOOL%"=="devenv" (
         ) ELSE IF "%A_CMAKE_BUILD_ARCH%"=="x86_64" (
             SET CMAKE_GENERATOR=Visual Studio 12 Win64
         )
-        IF "%A_WINDOWS_VERSION%"=="xp" (
+        IF "%A_WINDOWS_VERSION%"=="winxp" (
             SET CMAKE_TOOLSET=v120_xp
         ) ELSE (
             SET CMAKE_TOOLSET=v120
@@ -131,7 +133,7 @@ IF "%A_VS_TOOL%"=="devenv" (
         ) ELSE IF "%A_CMAKE_BUILD_ARCH%"=="x86_64" (
             SET CMAKE_GENERATOR=Visual Studio 14 Win64
         )
-        IF "%A_WINDOWS_VERSION%"=="xp" (
+        IF "%A_WINDOWS_VERSION%"=="winxp" (
             SET CMAKE_TOOLSET=v140_xp
         ) ELSE (
             SET CMAKE_TOOLSET=v140
@@ -142,7 +144,7 @@ IF "%A_VS_TOOL%"=="devenv" (
         ) ELSE IF "%A_CMAKE_BUILD_ARCH%"=="x86_64" (
             SET CMAKE_GENERATOR=Visual Studio 15 Win64
         )
-        IF "%A_WINDOWS_VERSION%"=="xp" (
+        IF "%A_WINDOWS_VERSION%"=="winxp" (
             SET CMAKE_TOOLSET=v141_xp
         ) ELSE (
             SET CMAKE_TOOLSET=v141
@@ -195,7 +197,7 @@ IF "%A_VS_TOOL%"=="devenv" (
             GOTO ERROR
         )
     )
-    IF "%CMAKE_BUILD_TARGET%"=="" (
+    IF "%CMAKE_BUILD_TARGET%"=="--" (
         cmake --build . --config %CMAKE_BUILD_TYPE% --clean-first || (
             POPD
             GOTO ERROR
@@ -255,7 +257,7 @@ IF "%A_VS_TOOL%"=="devenv" (
         POPD
         GOTO ERROR
     )
-    IF "%CMAKE_BUILD_TARGET%"=="" (
+    IF "%CMAKE_BUILD_TARGET%"=="--" (
         cmake --build . --config %CMAKE_BUILD_TYPE% --clean-first || (
             POPD
             GOTO ERROR

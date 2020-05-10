@@ -114,7 +114,7 @@ jobs:
         default: winxp
       cmake_options:
         type: string
-        default: ""
+        default: --
       cmake_build_arch:
         type: enum
         enum: [ x86_32, x86_64 ]
@@ -125,13 +125,12 @@ jobs:
         default: Release
       cmake_build_target:
         type: string
-        default: install
+        default: --
     steps:
       - choco_install_cmake
       - checkout_with_git_submodule
       - run:
           name: cmake << parameters.vs_version >> << parameters.vs_tool >> << parameters.windows_version >> << parameters.cmake_build_arch >> << parameters.cmake_build_type >> build << parameters.cmake_build_target >>
-          # shell: cmd.exe
           command: |
             .cicommon\cmake_vs_build.bat "<< parameters.vs_version >>" "<< parameters.vs_tool >>" "<< parameters.windows_version >>" "<< parameters.cmake_options >>" "<< parameters.cmake_build_arch >>" "<< parameters.cmake_build_type >>" "<< parameters.cmake_build_target >>"
   windows_vs2019_devenv_x86_32_Release:
@@ -282,7 +281,7 @@ workflows:
               vs_version: [ vs2019 ]
               vs_tool: [ devenv, nmake ]
               windows_version: [ win7 ]
-              cmake_options: [ "" ]
+              cmake_options: [ -- ]
               cmake_build_arch: [ x86_32, x86_64 ]
               cmake_build_type: [ Debug, Release, RelWithDebInfo, MinSizeRel ]
               cmake_build_target: [ install ]
