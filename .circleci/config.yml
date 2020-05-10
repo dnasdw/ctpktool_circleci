@@ -97,6 +97,43 @@ commands:
             popd
 
 jobs:
+  cmake_vs_build:
+    executor: win/default
+    parameters:
+      vs_version:
+        type: enum
+        enum: [ vs2019 ]
+        default: vs2019
+      vs_tool:
+        type: enum
+        enum: [ devenv, nmake ]
+        default: devenv
+      windows_version:
+        type: enum
+        enum: [ winxp, win7 ]
+        default: winxp
+      cmake_options:
+        type: string
+        default: ""
+      cmake_build_arch:
+        type: enum
+        enum: [ x86_32, x86_64 ]
+        default: x86_32
+      cmake_build_type:
+        type: enum
+        enum: [ Debug, Release, RelWithDebInfo, MinSizeRel ]
+        default: Release
+      cmake_build_target:
+        type: string
+        default: install
+    steps:
+      - choco_install_cmake
+      - checkout_with_git_submodule
+      - run:
+          name: cmake << parameters.vs_version >> << parameters.vs_tool >> << parameters.windows_version >> << parameters.cmake_build_arch >> << parameters.cmake_build_type >> build << parameters.cmake_build_target >>
+          shell: cmd.exe
+          command: |
+            .cicommon\cmake_vs_build.bat << parameters.vs_version >> << parameters.vs_tool >> << parameters.windows_version >> << parameters.cmake_options >> << parameters.cmake_build_arch >> << parameters.cmake_build_type >> << parameters.cmake_build_target >>
   windows_vs2019_devenv_x86_32_Release:
     executor: win/default
     steps:
@@ -238,19 +275,29 @@ workflows:
   version: 2
   build:
     jobs:
-      - windows_vs2019_devenv_x86_32_Release
-      - windows_vs2019_devenv_x86_32_Debug
-      - windows_vs2019_devenv_x86_32_RelWithDebInfo
-      - windows_vs2019_devenv_x86_32_MinSizeRel
-      - windows_vs2019_devenv_x86_64_Release
-      - windows_vs2019_devenv_x86_64_Debug
-      - windows_vs2019_devenv_x86_64_RelWithDebInfo
-      - windows_vs2019_devenv_x86_64_MinSizeRel
-      - windows_vs2019_nmake_x86_32_Release
-      - windows_vs2019_nmake_x86_32_Debug
-      - windows_vs2019_nmake_x86_32_RelWithDebInfo
-      - windows_vs2019_nmake_x86_32_MinSizeRel
-      - windows_vs2019_nmake_x86_64_Release
-      - windows_vs2019_nmake_x86_64_Debug
-      - windows_vs2019_nmake_x86_64_RelWithDebInfo
-      - windows_vs2019_nmake_x86_64_MinSizeRel
+      - cmake_vs_build:
+          matrix:
+            parameters:
+              vs_version: [ vs2019 ]
+              vs_tool: [ devenv, nmake ]
+              windows_version: [ winxp ]
+              cmake_options: [ "" ]
+              cmake_build_arch: [ x86_32, x86_64 ]
+              cmake_build_type: [ Debug, Release, RelWithDebInfo, MinSizeRel ]
+              cmake_build_target: [ install ]
+      #- windows_vs2019_devenv_x86_32_Release
+      #- windows_vs2019_devenv_x86_32_Debug
+      #- windows_vs2019_devenv_x86_32_RelWithDebInfo
+      #- windows_vs2019_devenv_x86_32_MinSizeRel
+      #- windows_vs2019_devenv_x86_64_Release
+      #- windows_vs2019_devenv_x86_64_Debug
+      #- windows_vs2019_devenv_x86_64_RelWithDebInfo
+      #- windows_vs2019_devenv_x86_64_MinSizeRel
+      #- windows_vs2019_nmake_x86_32_Release
+      #- windows_vs2019_nmake_x86_32_Debug
+      #- windows_vs2019_nmake_x86_32_RelWithDebInfo
+      #- windows_vs2019_nmake_x86_32_MinSizeRel
+      #- windows_vs2019_nmake_x86_64_Release
+      #- windows_vs2019_nmake_x86_64_Debug
+      #- windows_vs2019_nmake_x86_64_RelWithDebInfo
+      #- windows_vs2019_nmake_x86_64_MinSizeRel
