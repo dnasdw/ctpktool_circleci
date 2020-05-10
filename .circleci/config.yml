@@ -133,7 +133,7 @@ jobs:
           name: cmake << parameters.vs_version >> << parameters.vs_tool >> << parameters.windows_version >> << parameters.cmake_build_arch >> << parameters.cmake_build_type >> build << parameters.cmake_build_target >>
           shell: cmd.exe
           command: |
-            cmd /c ".cicommon\cmake_vs_build.bat ""<< parameters.vs_version >>"" ""<< parameters.vs_tool >>"" ""<< parameters.windows_version >>"" ""<< parameters.cmake_options >>"" ""<< parameters.cmake_build_arch >>"" ""<< parameters.cmake_build_type >>"" ""<< parameters.cmake_build_target >>"""
+            .cicommon\cmake_vs_build.bat "<< parameters.vs_version >>" "<< parameters.vs_tool >>" "<< parameters.windows_version >>" "<< parameters.cmake_options >>" "<< parameters.cmake_build_arch >>" "<< parameters.cmake_build_type >>" "<< parameters.cmake_build_target >>"
   windows_vs2019_devenv_x86_32_Release:
     executor: win/default
     steps:
@@ -281,7 +281,7 @@ workflows:
             parameters:
               vs_version: [ vs2019 ]
               vs_tool: [ devenv, nmake ]
-              windows_version: [ winxp ]
+              windows_version: [ win7 ]
               cmake_options: [ "" ]
               cmake_build_arch: [ x86_32, x86_64 ]
               cmake_build_type: [ Debug, Release, RelWithDebInfo, MinSizeRel ]
