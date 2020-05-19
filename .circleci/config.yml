@@ -20,6 +20,22 @@ commands:
             git submodule update --progress --init --recursive
 
 jobs:
+  build:
+    machine:
+      image: ubuntu-1604:201903-01
+    parameters:
+      cmake_build_type:
+        type: enum
+        enum: [ Debug, Release, RelWithDebInfo, MinSizeRel ]
+        default: Release
+    steps:
+      - checkout_with_git_submodule
+      - run: |
+          mkdir build
+          pushd build
+          cmake -D BUILD64=ON -D CMAKE_BUILD_TYPE=<< parameters.cmake_build_type >> ..
+          make install
+          popd
   cmake_vs_build:
     executor: win/default
     parameters:
@@ -57,18 +73,18 @@ jobs:
           command: |
             .cicommon\cmake_vs_build.bat "<< parameters.vs_version >>" "<< parameters.vs_tool >>" "<< parameters.windows_version >>" "<< parameters.cmake_options >>" "<< parameters.cmake_build_arch >>" "<< parameters.cmake_build_type >>" "<< parameters.cmake_build_target >>"
 
-workflows:
-  version: 2
-  build:
-    jobs:
-      - cmake_vs_build:
-          name: windows << matrix.vs_version >> << matrix.vs_tool >> << matrix.windows_version >> << matrix.cmake_build_arch >> << matrix.cmake_build_type >> << matrix.cmake_build_target >>
-          matrix:
-            parameters:
-              vs_version: [ vs2019 ]
-              vs_tool: [ devenv, nmake ]
-              windows_version: [ win7 ]
-              cmake_options: [ -- ]
-              cmake_build_arch: [ x86_32, x86_64 ]
-              cmake_build_type: [ Debug, Release, RelWithDebInfo, MinSizeRel ]
-              cmake_build_target: [ install ]
+# workflows:
+#   version: 2
+#   build:
+#     jobs:
+#       - cmake_vs_build:
+#           name: windows << matrix.vs_version >> << matrix.vs_tool >> << matrix.windows_version >> << matrix.cmake_build_arch >> << matrix.cmake_build_type >> << matrix.cmake_build_target >>
+#           matrix:
+#             parameters:
+#               vs_version: [ vs2019 ]
+#               vs_tool: [ devenv, nmake ]
+#               windows_version: [ win7 ]
+#               cmake_options: [ -- ]
+#               cmake_build_arch: [ x86_32, x86_64 ]
+#               cmake_build_type: [ Debug, Release, RelWithDebInfo, MinSizeRel ]
+#               cmake_build_target: [ install ]
