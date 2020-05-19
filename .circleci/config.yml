@@ -32,7 +32,7 @@ jobs:
       - checkout_with_git_submodule
       - run: |
           sudo apt-get update
-          apt-get install g++-multilib
+          sudo apt-get install g++-multilib
       - run: |
           mkdir build
           pushd build
