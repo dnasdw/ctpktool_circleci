@@ -31,7 +31,7 @@ jobs:
     steps:
       - checkout_with_git_submodule
       - run: |
-          sudo apt install -y g++-multilib
+          sudo apt-get install g++-multilib
       - run: |
           mkdir build
           pushd build
