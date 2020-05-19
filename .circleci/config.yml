@@ -33,7 +33,7 @@ jobs:
       - run: |
           mkdir build
           pushd build
-          cmake -D BUILD64=ON -D CMAKE_BUILD_TYPE=<< parameters.cmake_build_type >> ..
+          cmake -D BUILD64=OFF -D CMAKE_BUILD_TYPE=<< parameters.cmake_build_type >> ..
           make install
           popd
   cmake_vs_build:
