@@ -31,6 +31,8 @@ jobs:
     steps:
       - checkout_with_git_submodule
       - run: |
+          sudo apt install -y g++-multilib
+      - run: |
           mkdir build
           pushd build
           cmake -D BUILD64=OFF -D CMAKE_BUILD_TYPE=<< parameters.cmake_build_type >> ..
